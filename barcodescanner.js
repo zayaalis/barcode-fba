@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, Vibration } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useNavigation } from '@react-navigation/native';
 
-export default function BarCodeScannerApp({history}) {
+
+export default function BarCodeScannerApp() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [text, setText] = useState('Not yet scanned');
-  const [scannedBarcodes, setScannedBarcodes] = useState([])
+  const [scannedBarcodes, setScannedBarcodes] = useState([]);
+  const navigation = useNavigation(); 
 
   const askForCameraPermission = () => {
 	(async () => {
@@ -24,7 +27,8 @@ export default function BarCodeScannerApp({history}) {
   const handleBarCodeScanned = ({ type, data }) => {
 	setScanned(true);
 	setText(data);
-	setScannedBarcodes(scannedBarcodes => scannedBarcodes.concat(data))
+	setScannedBarcodes(scannedBarcodes => scannedBarcodes.concat(data));
+	Vibration.vibrate();
 	console.log('Type: ' + type + '\nData: ' + data);
 	console.log(scannedBarcodes);
   };
@@ -54,7 +58,10 @@ export default function BarCodeScannerApp({history}) {
 	  </View>
 	  <Text style={styles.maintext}>{text}</Text>
 
-	  {scanned && <Button title={'Scan again?'} onPress={() => setScanned(false)} color='tomato' />}
+  		{scanned && <Button title={'Scan more?'} onPress={() => setScanned(false)} color='orange' />}
+		{scanned && <Button title={'View Scanned Barcodes'} onPress={() => navigation.navigate('Scanned Barcodes',{
+				scannedBarcodes: scannedBarcodes
+			  })} color='green' />}
 	</View>
   );
 }

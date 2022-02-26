@@ -1,61 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import { Text, View, StyleSheet, Button, Clipboard, TouchableOpacity, Alert } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
-export default function ScannedBarcodes() {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-  const [text, setText] = useState('Not yet scanned');
-  const [scannedBarcodes, setScannedBarcodes] = useState([])
-
-  const askForCameraPermission = () => {
-	(async () => {
-	  const { status } = await BarCodeScanner.requestPermissionsAsync();
-	  setHasPermission(status === 'granted');
-	})()
-  }
-
-  // Request Camera Permission
-  useEffect(() => {
-	askForCameraPermission();
-  }, []);
-
-  // What happens when we scan the bar code
-  const handleBarCodeScanned = ({ type, data }) => {
-	setScanned(true);
-	setText(data);
-	scannedBarcodesArray.push(data);
-	setScannedBarcodes(scannedBarcodes => scannedBarcodes.concat(query))
-	console.log('Type: ' + type + '\nData: ' + data);
-	console.log(scannedBarcodesArray);
-  };
-
-  // Check permissions and return the screens
-  if (hasPermission === null) {
-	return (
-	  <View style={styles.container}>
-		<Text>Requesting for camera permission</Text>
-	  </View>)
-  }
-  if (hasPermission === false) {
-	return (
-	  <View style={styles.container}>
-		<Text style={{ margin: 10 }}>No access to camera</Text>
-		<Button title={'Allow Camera'} onPress={() => askForCameraPermission()} />
-	  </View>)
-  }
+export default function ScannedBarcodesApp() {
+	
+	const route = useRoute();
+	
+	// Get params
+	const { scannedBarcodes } = route.params;
+		
+	const copyToClipboard = () => {
+		Clipboard.setString(scannedBarcodes.join('\r\n'));
+		Alert.alert('Barcodes Copied','Happy days!');
+	}
 
   // Return the View
   return (
 	<View style={styles.container}>
-	  <View style={styles.barcodebox}>
-		<BarCodeScanner
-		  onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-		  style={{ height: 400, width: 400 }} />
-	  </View>
-	  <Text style={styles.maintext}>{text}</Text>
-
-	  {scanned && <Button title={'Scan again?'} onPress={() => setScanned(false)} color='tomato' />}
+	  <Text style={styles.maintext}>Scanned Barcodes will be here</Text>
+	  <Text>{scannedBarcodes.join('\r\n')}</Text>
+	  <TouchableOpacity onPress={() => copyToClipboard()}>
+		<Text>Click here to copy to Clipboard</Text>
+	  </TouchableOpacity>
 	</View>
   );
 }
@@ -79,5 +45,9 @@ const styles = StyleSheet.create({
 	overflow: 'hidden',
 	borderRadius: 30,
 	backgroundColor: 'tomato'
+  },  
+  copiedText: {
+	  marginTop: 10,
+	  color: 'red'
   }
 });

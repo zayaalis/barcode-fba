@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import BarCodeScannerApp from "./barcodescanner.js";
-import ScannedBarcodes from "./scannedbarcodes.js";
+import ScannedBarcodesApp from "./scannedbarcodes.js";
 
 function HomeScreen({ navigation }) {
   return (
@@ -25,6 +25,13 @@ function ScanBarcodeScreen() {
     </View>
   );
 }
+function ScannedBarcodeScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <ScannedBarcodesApp />
+    </View>
+  );
+}
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +41,7 @@ function App() {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Scan Barcodes" component={ScanBarcodeScreen} />
+        <Stack.Screen name="Scanned Barcodes" component={ScannedBarcodeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
