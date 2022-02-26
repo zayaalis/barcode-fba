@@ -29,8 +29,6 @@ export default function BarCodeScannerApp() {
 	setText(data);
 	setScannedBarcodes(scannedBarcodes => scannedBarcodes.concat(data));
 	Vibration.vibrate();
-	console.log('Type: ' + type + '\nData: ' + data);
-	console.log(scannedBarcodes);
   };
 
   // Check permissions and return the screens
